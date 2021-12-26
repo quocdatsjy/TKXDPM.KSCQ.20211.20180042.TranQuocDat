@@ -133,23 +133,16 @@ public class PlaceOrderController extends BaseController{
         }
         return province.equals("Hà Nội") || province.equals("Đà Nẵng") || province.equals("Hồ Chí Minh");
     }
-    
 
+
+    private final ShippingFeeCalculator shipFeeCalculator = new AlternativeWeightShipFee();
     /**
      * This method calculates the shipping fees of order
      * @param order
      * @return shippingFee
      */
     public int calculateShippingFee(Order order, boolean rushOrder){
-        Random rand = new Random();
-        int fees = (int)( ( (rand.nextFloat()*10)/100 ) * order.getAmount() );
-        if(rushOrder) {
-            fees = (int) (fees * (1 + RUSH_ORDER_FEE_INCREASE_PERCENT));
-        }
-        LOGGER.info("Order Amount: " + order.getAmount() + " -- Shipping Fees: " + fees);
-        return fees;
+        return shipFeeCalculator.calculateShippingFee(order, rushOrder);
     }
-
-    private final double RUSH_ORDER_FEE_INCREASE_PERCENT = 0.3;
 
 }
